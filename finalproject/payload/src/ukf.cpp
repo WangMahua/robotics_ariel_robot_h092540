@@ -32,12 +32,12 @@ ukf::ukf(int state_size , int measurement_size){
   w_c.setZero(x_sigmavector_size);
   w_m.setZero(x_sigmavector_size);
 
-  w_c(0) = lambda/(L+lambda)+(1-pow(alpha,2)+beta);
+  w_c(0) = lambda/(L+lambda)+(1-alpha*alpha+beta);
   w_m(0) = lambda/(L+lambda);
 
   for(int i=1 ; i<x_sigmavector_size ; i++){
-    w_c(i) = 1/((2*L+lambda));
-    w_m(i) = 1/((2*L+lambda));
+    w_c(i) = 1/(2*(L+lambda));
+    w_m(i) = 1/(2*(L+lambda));
   }
 
   // default Q R P matrix
@@ -61,8 +61,8 @@ void ukf::predict(){
 
   for(int i=0;i<x_size;i++){
     Eigen::VectorXd sigma =(M.row(i)).transpose();
-    x_sigmavector.col(i+1) = x_sigmavector.col(0) + sigma;
-    x_sigmavector.col(i+x_size+1) = x_sigmavector.col(0) - sigma;
+    x_sigmavector.col(i+1) = x + sigma;
+    x_sigmavector.col(i+x_size+1) = x - sigma;
   }
 
   // process model
